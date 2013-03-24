@@ -17,6 +17,8 @@ public class RobotMain extends IterativeRobot {
     public void robotInit() {
         comp = new Compressor(1,1);
         controllables.addElement(RobotDrive.getInstance());
+        controllables.addElement(Fan.getInstance());
+         controllables.addElement(Climber.getInstance());
         comp.start();
     }
 

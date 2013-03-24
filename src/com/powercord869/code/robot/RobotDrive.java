@@ -6,6 +6,7 @@ package com.powercord869.code.robot;
 
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Victor;
 
 /**
  *
@@ -13,21 +14,21 @@ import edu.wpi.first.wpilibj.Joystick;
  */
 public class RobotDrive implements RobotControllable {
 
-    private Jaguar jag1, jag2, jag3, jag4, jag5, jag6;
+    private Victor jag1, jag2, jag3, jag4, jag5, jag6;
     private Joystick joy1, joy2;
     private static RobotDrive drive = new RobotDrive();
-    private double precRight;
-    private double precLeft;
+    private double precRight = 1;
+    private double precLeft = 1;
 
     private RobotDrive() {
         joy1 = new Joystick(LEFT_STICK);
         joy2 = new Joystick(RIGHT_STICK);
-        jag1 = new Jaguar(1);
-        jag2 = new Jaguar(2);
-        jag3 = new Jaguar(3);
-        jag4 = new Jaguar(4);
-        jag5 = new Jaguar(5);
-        jag6 = new Jaguar(6);
+        jag1 = new Victor(1);
+        jag2 = new Victor(2);
+        jag3 = new Victor(3);
+        jag4 = new Victor(4);
+        jag5 = new Victor(5);
+        jag6 = new Victor(6);
     }
 
     public void control() {

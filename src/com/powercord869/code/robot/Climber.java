@@ -13,11 +13,15 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public class Climber implements RobotControllable {
     DoubleSolenoid lifter;
     Logitech controller;
-    Climber climber = new Climber();
+    private static Climber climber = new Climber();
     
     private Climber(){
         lifter = new DoubleSolenoid(LIFTER_SOLENOID_FORWARD, LIFTER_SOLENOID_BACK);
         controller = Logitech.getInstance();
+    }
+    
+    public static Climber getInstance(){
+        return climber;
     }
     
     public void control() {

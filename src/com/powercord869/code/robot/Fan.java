@@ -16,18 +16,25 @@ public class Fan implements RobotControllable {
     private Victor fanBlades;
     private Logitech controller;
     private AnalogChannel pot;
+    private static Fan fan = new Fan();
     public static double[] positions = {0, 0, 0};
     
     private Fan() {
-        pot = new AnalogChannel(POTENTIOMETER);
+      pot = new AnalogChannel(POTENTIOMETER);
         this.controller = Logitech.getInstance();
         fanControl = new Victor(FAN_CONTROL);
         fanBlades = new Victor(FAN_BLADES);
     }
+    
+    public static Fan getInstance(){
+        return fan;
+    }
 
     public void control() {
+
        double move = controller.getLeftStickY() < -.9 ? 1.0 : controller.getLeftStickY() > .9 ? -1.0 : 0;
-       double spin = controller.getL2() ? -1.0 : controller.getL2() && controller.getL1() ? 1.0 : 0;
+       double spin = controller.getL2() && !controller.getL1() ? -1.0 : controller.getL2() && controller.getL1() ? 1.0 : 0;
+       System.out.println("spin " + spin);
        oscillateFan(spin);
        moveFan(move);
     }
@@ -47,10 +54,12 @@ public class Fan implements RobotControllable {
     
     public void oscillateFan(double intensity){
         fanBlades.set(intensity);
+        System.out.println("blades intensity: " + fanBlades.get() + "passed: " + intensity);
     }
     
     public void moveFan(double intensity){
-        fanBlades.set(intensity);
+        fanControl.set(intensity);
+        System.out.println("move intensity: " + fanControl.get() + "passed: " + intensity);
     }
 
     public void stop() {
