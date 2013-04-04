@@ -61,12 +61,15 @@ public class RobotMain extends IterativeRobot {
      object is the same as the current one, so I changed this so I dont need to use so many static variables in the routines*/
     public void autonomousPeriodic() {      
         AutonomousRoutine.THE_MAGIC_NUMBER = DriverStation.getInstance().getAnalogIn(1) / 5.0;
-        LCD.print("Auto: " + this.getStopwatchTime() + " sec");
         if(routine.validate()){
             routine.run();
         }else{
             routine.stop();
-        }
+        }       
+        LCD.print("Auto: " + this.getStopwatchTime() + " sec");
+        LCD.print(2, "Distance: " + routine.getDistanceTraveled());
+        LCD.print(3, "Encoder Offset: " + routine.getEncoderOffset());
+        LCD.print(4, "Right Motors: " + routine.getDrive().getRightSpeed() + " Left Motors: " + routine.getDrive().getLeftSpeed());
     }
 
     public void teleopPeriodic() {

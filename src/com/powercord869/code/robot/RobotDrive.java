@@ -32,9 +32,16 @@ public class RobotDrive implements RobotControllable {
         jag3_left = new Jaguar(RIGHT_MOTOR_3);
         
     }
+    
+    public double getRightSpeed(){
+        return jag1_right.getSpeed() + jag2_right.getSpeed() + jag3_right.getSpeed() / 3;
+    }
+    
+     public double getLeftSpeed(){
+        return jag1_left.getSpeed() + jag2_left.getSpeed() + jag3_left.getSpeed() / 3;
+    }
 
-    public void control() {
-        DriverStation d = DriverStation.getInstance();        
+    public void control() {       
         tankDrive(leftJoyStick.getY(), rightJoyStick.getY());
     }
 

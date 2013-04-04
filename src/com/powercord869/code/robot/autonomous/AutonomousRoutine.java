@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.Timer;
  * @author Kevin
  */
 public abstract class AutonomousRoutine {
-    
+
     private static int DRIVE_AND_TURN_ROUTINE = 1;
     private static int DRIVE_AND_RUN_FAN_ROUTINE = 2;
     private static int DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT = 3;
@@ -36,7 +36,6 @@ public abstract class AutonomousRoutine {
         encoders = EncoderControl.getInstance();
         drive = RobotDrive.getInstance();
     }
- 
 
     protected void setRoutineNumber(int number) {
         this.routineNumber = number;
@@ -45,22 +44,23 @@ public abstract class AutonomousRoutine {
     protected void setDistanceToTravel(double travel) {
         distanceToTravel = travel;
     }
-    
-    protected Timer getTimer(){
+
+    protected Timer getTimer() {
         return time;
     }
 
-    protected RobotDrive getDrive() {
+    public RobotDrive getDrive() {
         return drive;
     }
 
-    protected double getDistanceToTravel() {
-        return distanceToTravel;
+    public double getDistanceToTravel() {
+        return encoders.getLeftDistance() + encoders.getRightDistance() / 2;
     }
-    
-    protected double getDistanceTraveled(){
-            return distanceTraveled;
-}
+
+    public double getDistanceTraveled() {
+        return distanceTraveled;
+    }
+
     protected DriverStation getDriverStation() {
         return driver;
     }
@@ -77,7 +77,7 @@ public abstract class AutonomousRoutine {
         return encoders;
     }
 
-    protected double getEncoderOffset() {
+    public double getEncoderOffset() {
         return encoders.getLeftDistance() - encoders.getRightDistance();
     }
 
@@ -99,17 +99,20 @@ public abstract class AutonomousRoutine {
             drive.setRightMotors(0);
 
         }
-        distanceTraveled = encoders.getLeftDistance() + encoders.getRightDistance();
+
     }
     //im working on it! i just wrote some random stuff to get my mind going, ill get it though6
+
     protected void turn(int degrees) {
         turnDistance = degrees * THE_MAGIC_NUMBER;
-        if(degrees > 0){
-            drive.setLeftMotors(-.5);
-            drive.setRightMotors(.5); 
-        }else{
-            drive.setLeftMotors(.5);
-            drive.setRightMotors(-.5);
+        if (getEncoderOffset() < turnDistance) {
+            if (degrees > 0) {
+                drive.setLeftMotors(-.5);
+                drive.setRightMotors(.5);
+            } else {
+                drive.setLeftMotors(.5);
+                drive.setRightMotors(-.5);
+            }
         }
     }
 
