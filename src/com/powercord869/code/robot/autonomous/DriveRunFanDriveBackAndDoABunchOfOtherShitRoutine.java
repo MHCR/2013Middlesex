@@ -19,7 +19,7 @@ public class DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine extends Autonomou
     private double DISTANCE_2 = 0;
     private static int ROUTINE_NUMBER = 3;
     private Timer time;
-    private Fan fan;
+    private Fan fan;//s
 
     private DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine() {
         time = getTimer();
