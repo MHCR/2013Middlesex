@@ -18,6 +18,8 @@ public class Fan implements RobotControllable {
     private AnalogChannel pot;
     private static Fan fan = new Fan();
     public static double[] positions = {0, 0, 0};
+     private double move;
+     private double spin;
     
     private Fan() {
       pot = new AnalogChannel(POTENTIOMETER);
@@ -31,35 +33,22 @@ public class Fan implements RobotControllable {
     }
 
     public void control() {
-
-       double move = controller.getLeftStickY() < -.9 ? 1.0 : controller.getLeftStickY() > .9 ? -1.0 : 0;
-       double spin = controller.getL2() && !controller.getL1() ? -1.0 : controller.getL2() && controller.getL1() ? 1.0 : 0;
-       System.out.println("spin " + spin);
+        // I like my ternary operators :(
+       move = controller.getLeftStickY() < -.9 ? 1.0 : controller.getLeftStickY() > .9 ? -1.0 : 0;
+       spin = controller.getL2() && !controller.getL1() ? -1.0 : controller.getL2() && controller.getL1() ? 1.0 : 0;
        oscillateFan(spin);
        moveFan(move);
     }
     
-    public void changePosition(int position) 
-{
-	double dif = pot.getVoltage() - positions[position];
-	if (dif < .02 ) {
-		fanControl.set(1 * dif + .7);
-	} else if (dif > .02) {
-		fanControl.set(-1 * dif - .7);
-	} else {
-		fanControl.set(0);
-	}
-
-}
+  
     
     public void oscillateFan(double intensity){
         fanBlades.set(intensity);
-        System.out.println("blades intensity: " + fanBlades.get() + "passed: " + intensity);
     }
     
     public void moveFan(double intensity){
         fanControl.set(intensity);
-        System.out.println("move intensity: " + fanControl.get() + "passed: " + intensity);
+       
     }
 
     public void stop() {
