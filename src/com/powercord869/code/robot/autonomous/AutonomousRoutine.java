@@ -101,12 +101,12 @@ public abstract class AutonomousRoutine {
         }
         distanceTraveled = encoders.getLeftDistance() + encoders.getRightDistance();
     }
-
+    //im working on it! i just wrote some random stuff to get my mind going, ill get it though6
     protected void turn(int degrees) {
         turnDistance = degrees * THE_MAGIC_NUMBER;
         if(degrees > 0){
             drive.setLeftMotors(-.5);
-            drive.setRightMotors(.5);
+            drive.setRightMotors(.5); 
         }else{
             drive.setLeftMotors(.5);
             drive.setRightMotors(-.5);
