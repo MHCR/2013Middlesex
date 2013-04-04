@@ -11,26 +11,21 @@ import edu.wpi.first.wpilibj.Timer;
  *
  * @author Computer
  */
-public class DriveAndRunFanRoutine extends AutonomousNode {
+public class DriveAndRunFanRoutine extends AutonomousRoutine {
 
     private double DISTANCE = 0;
     private Fan fan;
     private boolean timerStarted = false;
-    private static DriveAndRunFanRoutine run = new DriveAndRunFanRoutine();
 
-    private DriveAndRunFanRoutine() {
+    public DriveAndRunFanRoutine() {
         setDistanceToTravel(DISTANCE);
         fan = getFan();
     }
 
-    public static DriveAndRunFanRoutine getInstance() {
-        return run;
-    }
 
     public void run() {
-        if (distanceTraveled < getDistanceToTravel()) {
-            drive(getDistanceToTravel());
-        } else {
+        drive(getDistanceToTravel());
+        if (distanceTraveled >= getDistanceToTravel()) {
             if (!timerStarted) {
                 time.start();
                 timerStarted = true;

@@ -4,26 +4,29 @@
  */
 package com.powercord869.code.robot;
 
-import com.powercord869.code.robot.autonomous.AutonomousNode;
+import com.powercord869.code.robot.autonomous.AutonomousRoutine;
 import com.powercord869.code.robot.autonomous.DriveAndTurnRoutine;
 import com.powercord869.code.robot.autonomous.DriveAndRunFanRoutine;
+import com.powercord869.code.robot.autonomous.DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.Vector;
 
 public class RobotMain extends IterativeRobot {
 
     private Vector controllables = new Vector();
-    private Vector autonomousNodes = new Vector();
+    private Vector autonomousRoutines = new Vector();
     private Compressor comp;
-    private AutonomousNode o = null;
+    private AutonomousRoutine routine = null;
 
     public void robotInit() {
         comp = new Compressor(1, 1);
         controllables.addElement(RobotDrive.getInstance());
         controllables.addElement(Fan.getInstance());
         controllables.addElement(Climber.getInstance());
-        autonomousNodes.addElement(DriveAndRunFanRoutine.getInstance());
-        autonomousNodes.addElement(DriveAndTurnRoutine.getInstance());
+        autonomousRoutines.addElement(new DriveAndRunFanRoutine());
+        autonomousRoutines.addElement(new DriveAndTurnRoutine());
+        autonomousRoutines.addElement(new DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine());
         comp.start();
     }
 
@@ -31,6 +34,13 @@ public class RobotMain extends IterativeRobot {
     }
 
     public void autonomousInit() {
+        if(DriverStation.getInstance().getDigitalIn(1)){
+            routine = new DriveAndTurnRoutine();
+        }else if(DriverStation.getInstance().getDigitalIn(2)){
+             routine = new DriveAndRunFanRoutine();
+        }else if(DriverStation.getInstance().getDigitalIn(3)){                 
+            routine = new DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine();  
+        }
     }
 
     public void teleopInit() {
@@ -46,22 +56,17 @@ public class RobotMain extends IterativeRobot {
             o.stop();
         }
     }
-        
-        /*I noticed alot of potential problems with constantly creating new objects even if the previous validated 
-          object is the same as the current one, so I changed this so I dont need to use so many static variables in the routines*/  
-    public void autonomousPeriodic() {
-        if (autonomousNodes.size() >= 1) {
-            for (int i = 0; i < autonomousNodes.size(); i++) {
-                AutonomousNode temp = (AutonomousNode)autonomousNodes.elementAt(i);
-                if (o == null || (o.getRoutineNumber() != temp.getRoutineNumber() && temp.validate())) {
-                    o = temp;
-                }
-                if(o.validate()){
-                    o.run();
-                }
-            }
-        }
+
+    /*I noticed alot of potential problems with constantly creating new objects even if the previous validated 
+     object is the same as the current one, so I changed this so I dont need to use so many static variables in the routines*/
+    public void autonomousPeriodic() {      
+        AutonomousRoutine.THE_MAGIC_NUMBER = DriverStation.getInstance().getAnalogIn(1) / 5.0;
         LCD.print("Auto: " + this.getStopwatchTime() + " sec");
+        if(routine.validate()){
+            routine.run();
+        }else{
+            routine.stop();
+        }
     }
 
     public void teleopPeriodic() {

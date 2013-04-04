@@ -15,14 +15,12 @@ public class Fan implements RobotControllable {
     private Victor fanControl;
     private Victor fanBlades;
     private Logitech controller;
-    private AnalogChannel pot;
     private static Fan fan = new Fan();
     public static double[] positions = {0, 0, 0};
      private double move;
      private double spin;
     
     private Fan() {
-      pot = new AnalogChannel(POTENTIOMETER);
         this.controller = Logitech.getInstance();
         fanControl = new Victor(FAN_CONTROL);
         fanBlades = new Victor(FAN_BLADES);

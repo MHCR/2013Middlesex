@@ -8,7 +8,6 @@ package com.powercord869.code.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Victor;
 
 /**
  *
@@ -16,36 +15,36 @@ import edu.wpi.first.wpilibj.Victor;
  */
 public class RobotDrive implements RobotControllable {
 
-    private Jaguar jag1, jag2, jag3, jag4, jag5, jag6, jag7;
-    private Joystick joy1, joy2;
+    private Jaguar jag1_left, jag2_left, jag3_left, jag1_right, jag2_right, jag3_right;
+    private Joystick leftJoyStick, rightJoyStick;
     private static RobotDrive drive = new RobotDrive();
     private double precRight = 1;
     private double precLeft = 1;
     
     public RobotDrive() {
-        joy1 = new Joystick(LEFT_STICK);
-        joy2 = new Joystick(RIGHT_STICK);
-        jag1 = new Jaguar(LEFT_MOTOR_1);
-        jag2 = new Jaguar(LEFT_MOTOR_2);
-        jag3 = new Jaguar(LEFT_MOTOR_3);
-        jag4 = new Jaguar(RIGHT_MOTOR_1);
-        jag5 = new Jaguar(RIGHT_MOTOR_2);
-        jag6 = new Jaguar(RIGHT_MOTOR_3);
+        leftJoyStick = new Joystick(LEFT_STICK);
+        rightJoyStick = new Joystick(RIGHT_STICK);
+        jag1_left = new Jaguar(LEFT_MOTOR_1);
+        jag2_left = new Jaguar(LEFT_MOTOR_2);
+        jag3_right = new Jaguar(LEFT_MOTOR_3);
+        jag1_right = new Jaguar(RIGHT_MOTOR_1);
+        jag2_right = new Jaguar(RIGHT_MOTOR_2);
+        jag3_left = new Jaguar(RIGHT_MOTOR_3);
         
     }
 
     public void control() {
         DriverStation d = DriverStation.getInstance();        
-        tankDrive(joy1.getY(), joy2.getY());
+        tankDrive(leftJoyStick.getY(), rightJoyStick.getY());
     }
 
     private void tankDrive(double right, double left) {
-        jag1.set(right * precRight);
-        jag2.set(right * precRight);
-        jag3.set(right * precRight);
-        jag4.set(-left * precLeft);
-        jag5.set(-left * precLeft);
-        jag6.set(-left * precLeft);
+        jag1_left.set(right * precRight);
+        jag2_left.set(right * precRight);
+        jag3_right.set(right * precRight);
+        jag1_right.set(-left * precLeft);
+        jag2_right.set(-left * precLeft);
+        jag3_left.set(-left * precLeft);
     }
 
     public void setPrecisionValues(double right, double left) {
@@ -58,24 +57,24 @@ public class RobotDrive implements RobotControllable {
     }
     
     public void setRightMotors(double intensity){
-        jag1.set(intensity);
-        jag2.set(intensity);
-        jag3.set(intensity);
+        jag1_left.set(intensity);
+        jag2_left.set(intensity);
+        jag3_right.set(intensity);
     }
     
      public void setLeftMotors(double intensity){
-        jag4.set(intensity);
-        jag5.set(intensity);
-        jag6.set(intensity);
+        jag1_right.set(intensity);
+        jag2_right.set(intensity);
+        jag3_left.set(intensity);
     }
 
 
     public void stop(){
-        jag1.set(0);
-        jag2.set(0);
-        jag3.set(0);
-        jag4.set(0);
-        jag5.set(0);
-        jag6.set(0);
+        jag1_left.set(0);
+        jag2_left.set(0);
+        jag3_right.set(0);
+        jag1_right.set(0);
+        jag2_right.set(0);
+        jag3_left.set(0);
     }    
 }

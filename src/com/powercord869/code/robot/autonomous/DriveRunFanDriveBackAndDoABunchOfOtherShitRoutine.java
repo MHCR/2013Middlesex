@@ -11,45 +11,37 @@ import edu.wpi.first.wpilibj.Timer;
  *
  * @author Kevin
  */
-public class DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine extends AutonomousNode {
-
-    private static DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine yea = new DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine();
+public class DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine extends AutonomousRoutine {  
     private boolean timerStarted = false;
     private double DISTANCE = 0;
     private double DISTANCE_2 = 0;
     private static int ROUTINE_NUMBER = 3;
-    private Timer time;
+    private Timer timer;
     private Fan fan;//s
 
-    private DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine() {
-        time = getTimer();
+    public DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine() {
+        timer = getTimer();
         setDistanceToTravel(DISTANCE);
         setRoutineNumber(ROUTINE_NUMBER);
         fan = getFan();
     }
 
-    public static DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine getInstance() {
-        return yea;
-    }
-
     public void run() {
-        if (distanceTraveled < getDistanceToTravel()) {
             drive(getDistanceToTravel());
-        } else {
-            if (!timerStarted) {
-                time.start();
+            if (!timerStarted && getDistanceTraveled() >= getDistanceToTravel()) {
+                timer.start();
                 timerStarted = true;
             }
-            if (time.get() < 1.3) {
+            if (timer.get() < 1.3) {
                 fan.moveFan(1);
-            } else if (time.get() > 1.3 && time.get() < 3) {
+            } else if (timer.get() > 1.3 && timer.get() < 3) {
                 fan.oscillateFan(1);
             } else {
                 fan.oscillateFan(0);
             }
 
         }
-    }
+    
 
     public boolean validate() {
         return getDriverStation().getDigitalIn(ROUTINE_NUMBER);
@@ -60,7 +52,7 @@ public class DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine extends Autonomou
         fan.moveFan(0);
         drive.setLeftMotors(0);
         drive.setRightMotors(0);
-        time.stop();
-        time.reset();
+        timer.stop();
+        timer.reset();
     }
 }

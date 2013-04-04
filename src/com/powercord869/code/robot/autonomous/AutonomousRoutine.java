@@ -14,8 +14,11 @@ import edu.wpi.first.wpilibj.Timer;
  *
  * @author Kevin
  */
-public abstract class AutonomousNode {
-
+public abstract class AutonomousRoutine {
+    
+    private static int DRIVE_AND_TURN_ROUTINE = 1;
+    private static int DRIVE_AND_RUN_FAN_ROUTINE = 2;
+    private static int DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT = 3;
     private static EncoderControl encoders;
     private Fan fan;
     private double distanceToTravel = 0;//change 
@@ -24,13 +27,16 @@ public abstract class AutonomousNode {
     RobotDrive drive;
     protected Timer time;
     protected static double distanceTraveled = 0;
+    private double turnDistance = 0;
+    public static double THE_MAGIC_NUMBER = 1;
 
-    public AutonomousNode() {
+    public AutonomousRoutine() {
         time = new Timer();
         fan = Fan.getInstance();
         encoders = EncoderControl.getInstance();
         drive = RobotDrive.getInstance();
     }
+ 
 
     protected void setRoutineNumber(int number) {
         this.routineNumber = number;
@@ -51,7 +57,10 @@ public abstract class AutonomousNode {
     protected double getDistanceToTravel() {
         return distanceToTravel;
     }
-
+    
+    protected double getDistanceTraveled(){
+            return distanceTraveled;
+}
     protected DriverStation getDriverStation() {
         return driver;
     }
@@ -87,19 +96,26 @@ public abstract class AutonomousNode {
             }
         } else {
             drive.setLeftMotors(0);
-            drive.setLeftMotors(0);
+            drive.setRightMotors(0);
 
         }
-        distanceTraveled = encoders.getLeftDistance();
+        distanceTraveled = encoders.getLeftDistance() + encoders.getRightDistance();
     }
 
     protected void turn(int degrees) {
-        //its too late, thinking is hard.
+        turnDistance = degrees * THE_MAGIC_NUMBER;
+        if(degrees > 0){
+            drive.setLeftMotors(-.5);
+            drive.setRightMotors(.5);
+        }else{
+            drive.setLeftMotors(.5);
+            drive.setRightMotors(-.5);
+        }
     }
 
     public abstract void run();
 
-    public abstract boolean validate();
+    public abstract boolean validate(); //i think this is pointless now, not sure yet though. I should be though :/
 
     public abstract void stop();
 }

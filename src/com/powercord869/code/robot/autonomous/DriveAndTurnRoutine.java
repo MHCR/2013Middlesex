@@ -6,34 +6,35 @@ package com.powercord869.code.robot.autonomous;
 
 import com.powercord869.code.robot.RobotDrive;
 
+
 /**
  *
  * @author Computer
  */
-public class DriveAndTurnRoutine extends AutonomousNode {
-    private static int TURN_90_OFFSET;
-    private static DriveAndTurnRoutine move = new DriveAndTurnRoutine();
+public class DriveAndTurnRoutine extends AutonomousRoutine {
+    private static int TURN_90_OFFSET = 0;
     private double DISTANCE = 0;//I see the redundancy, but myehh
     private double DISTANCE_2 = 0;
+    private double encoderOffset = 0;
+    private double fullDistance = 0;
     
-    private DriveAndTurnRoutine(){
+    public DriveAndTurnRoutine(){
+        encoderOffset = getEncoderOffset();
         setDistanceToTravel(DISTANCE); //change
+        fullDistance = getDistanceToTravel() + DISTANCE_2;
     }
     
-    public static DriveAndTurnRoutine getInstance(){
-        return move;
-    }
 
     public boolean validate() {
         return getDriverStation().getDigitalIn(1);
     }
 
     public void run() {
-        if(distanceTraveled < getDistanceToTravel()){
+      
         drive(getDistanceToTravel());
-        }else if(getEncoderOffset() < TURN_90_OFFSET){
+       if(encoderOffset < TURN_90_OFFSET && distanceTraveled >= getDistanceToTravel()){
             turn(90);
-        }else if(getEncoderOffset() >= TURN_90_OFFSET && distanceTraveled <= getDistanceToTravel() + DISTANCE_2){
+        }else if(encoderOffset >= TURN_90_OFFSET && distanceTraveled <= fullDistance){
             drive(DISTANCE_2);
         }else{
             stop();
