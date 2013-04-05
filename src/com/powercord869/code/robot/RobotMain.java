@@ -8,6 +8,7 @@ import com.powercord869.code.robot.autonomous.AutonomousRoutine;
 import com.powercord869.code.robot.autonomous.DriveAndTurnRoutine;
 import com.powercord869.code.robot.autonomous.DriveAndRunFanRoutine;
 import com.powercord869.code.robot.autonomous.DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine;
+import com.powercord869.code.robot.autonomous.NoAutonomous;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.Vector;
@@ -15,19 +16,19 @@ import java.util.Vector;
 public class RobotMain extends IterativeRobot {
 
     private Vector controllables = new Vector();
-    private Vector autonomousRoutines = new Vector();
     private Compressor comp;
     private AutonomousRoutine routine = null;
+    private AutonomousRoutine noAutonomous = null;
+
 
     public void robotInit() {
         comp = new Compressor(1, 1);
         controllables.addElement(RobotDrive.getInstance());
         controllables.addElement(Fan.getInstance());
         controllables.addElement(Climber.getInstance());
-        autonomousRoutines.addElement(new DriveAndRunFanRoutine());
-        autonomousRoutines.addElement(new DriveAndTurnRoutine());
-        autonomousRoutines.addElement(new DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine());
-        comp.start();
+        //create a common autonomous routine that does nothing basically as a backup
+        noAutonomous = new NoAutonomous();
+        routine = noAutonomous;
     }
 
     public void disabledInit() {
@@ -40,6 +41,9 @@ public class RobotMain extends IterativeRobot {
              routine = new DriveAndRunFanRoutine();
         }else if(DriverStation.getInstance().getDigitalIn(3)){                 
             routine = new DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine();  
+        } else {
+            //to make sure that we dont run an old autonomous by accident
+            routine = noAutonomous;
         }
     }
 
@@ -55,25 +59,35 @@ public class RobotMain extends IterativeRobot {
             RobotControllable o = (RobotControllable) controllables.elementAt(i);
             o.stop();
         }
+        comp.stop(); //to pass inspection this should not run in disabled mode
+    }
+    
+    //any periodic BUT disabled will call this
+    public void commonPeriodic() {
+        comp.start();
     }
 
     /*I noticed alot of potential problems with constantly creating new objects even if the previous validated 
      object is the same as the current one, so I changed this so I dont need to use so many static variables in the routines*/
-    public void autonomousPeriodic() {      
+    public void autonomousPeriodic() {
+        //you only get so many characters
+        LCD.print("Auto: " + this.getStopwatchTime() + " sec");
+        LCD.print(2, "Distance: " + routine.getDistanceTraveled());
+        LCD.print(3, "Encoder: " + routine.getEncoderOffset());
+        LCD.print(4, "Right: " + routine.getDrive().getRightSpeed() + " Left: " + routine.getDrive().getLeftSpeed());
+        commonPeriodic();
+        
         AutonomousRoutine.THE_MAGIC_NUMBER = DriverStation.getInstance().getAnalogIn(1) / 5.0;
         if(routine.validate()){
             routine.run();
         }else{
             routine.stop();
         }       
-        LCD.print("Auto: " + this.getStopwatchTime() + " sec");
-        LCD.print(2, "Distance: " + routine.getDistanceTraveled());
-        LCD.print(3, "Encoder Offset: " + routine.getEncoderOffset());
-        LCD.print(4, "Right Motors: " + routine.getDrive().getRightSpeed() + " Left Motors: " + routine.getDrive().getLeftSpeed());
     }
 
     public void teleopPeriodic() {
         LCD.print("Teleop: " + this.getStopwatchTime() + " sec");
+        commonPeriodic();
         for (int i = 0; i < controllables.size(); i++) {
             RobotControllable o = (RobotControllable) controllables.elementAt(i);
             o.control();
@@ -82,5 +96,6 @@ public class RobotMain extends IterativeRobot {
 
     public void testPeriodic() {
         LCD.print("Test: " + this.getStopwatchTime() + " sec");
+        commonPeriodic();
     }
 }

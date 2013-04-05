@@ -35,6 +35,7 @@ public abstract class AutonomousRoutine {
         fan = Fan.getInstance();
         encoders = EncoderControl.getInstance();
         drive = RobotDrive.getInstance();
+        driver = DriverStation.getInstance();
     }
 
     protected void setRoutineNumber(int number) {

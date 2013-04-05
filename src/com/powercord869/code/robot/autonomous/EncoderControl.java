@@ -12,10 +12,10 @@ import edu.wpi.first.wpilibj.Encoder;
  */
 public class EncoderControl {
 
-    private static int LEFT_ENCODER_1 = 1;
-    private static int LEFT_ENCODER_2 = 2;
-    private static int RIGHT_ENCODER_1 = 3;
-    private static int RIGHT_ENCODER_2 = 4;
+    private static int LEFT_ENCODER_1 = 2;
+    private static int LEFT_ENCODER_2 = 3;
+    private static int RIGHT_ENCODER_1 = 4;
+    private static int RIGHT_ENCODER_2 = 5;
     private static Encoder right, left;
     private static EncoderControl encoderC = new EncoderControl();
 
