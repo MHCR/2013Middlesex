@@ -5,6 +5,8 @@
 package com.powercord869.code.robot;
 
 import com.powercord869.code.robot.autonomous.AutonomousNode;
+import com.powercord869.code.robot.autonomous.MoveForward;
+import com.powercord869.code.robot.autonomous.RunFan;
 import edu.wpi.first.wpilibj.Compressor;
 import java.util.Vector;
 
@@ -18,7 +20,9 @@ public class RobotMain extends IterativeRobot {
         comp = new Compressor(1,1);
         controllables.addElement(RobotDrive.getInstance());
         controllables.addElement(Fan.getInstance());
-         controllables.addElement(Climber.getInstance());
+        controllables.addElement(Climber.getInstance());
+        autonomousNodes.addElement(RunFan.getInstance());
+        autonomousNodes.addElement(MoveForward.getInstance());
         comp.start();
     }
 
