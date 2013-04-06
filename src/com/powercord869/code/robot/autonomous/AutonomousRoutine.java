@@ -55,11 +55,11 @@ public abstract class AutonomousRoutine {
     }
 
     public double getDistanceToTravel() {
-        return encoders.getLeftDistance() + encoders.getRightDistance() / 2;
+        return distanceToTravel;
     }
 
     public double getDistanceTraveled() {
-        return distanceTraveled;
+        return (encoders.getLeftDistance() + encoders.getRightDistance()) / 2;
     }
 
     protected DriverStation getDriverStation() {

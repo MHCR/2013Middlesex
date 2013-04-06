@@ -48,6 +48,7 @@ public class RobotMain extends IterativeRobot {
     }
 
     public void teleopInit() {
+        comp.start();
     }
 
     public void testInit() {
@@ -64,7 +65,7 @@ public class RobotMain extends IterativeRobot {
     
     //any periodic BUT disabled will call this
     public void commonPeriodic() {
-        comp.start();
+        
     }
 
     /*I noticed alot of potential problems with constantly creating new objects even if the previous validated 
@@ -75,6 +76,7 @@ public class RobotMain extends IterativeRobot {
         LCD.print(2, "Distance: " + routine.getDistanceTraveled());
         LCD.print(3, "Encoder: " + routine.getEncoderOffset());
         LCD.print(4, "Right: " + routine.getDrive().getRightSpeed() + " Left: " + routine.getDrive().getLeftSpeed());
+       
         commonPeriodic();
         
         AutonomousRoutine.THE_MAGIC_NUMBER = DriverStation.getInstance().getAnalogIn(1) / 5.0;

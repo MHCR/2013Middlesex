@@ -46,12 +46,12 @@ public class RobotDrive implements RobotControllable {
     }
 
     private void tankDrive(double right, double left) {
-        jag1_left.set(right * precRight);
-        jag2_left.set(right * precRight);
-        jag3_right.set(right * precRight);
-        jag1_right.set(-left * precLeft);
-        jag2_right.set(-left * precLeft);
-        jag3_left.set(-left * precLeft);
+        jag1_left.set(-right * precRight);
+        jag2_left.set(-right * precRight);
+        jag3_right.set(-right * precRight);
+        jag1_right.set(left * precLeft);
+        jag2_right.set(left * precLeft);
+        jag3_left.set(left * precLeft);
     }
 
     public void setPrecisionValues(double right, double left) {
