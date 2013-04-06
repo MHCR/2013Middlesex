@@ -5,6 +5,7 @@
 package com.powercord869.code.robot;
 
 import edu.wpi.first.wpilibj.AnalogChannel;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 
 /**
@@ -19,8 +20,9 @@ public class Fan implements RobotControllable {
     public static double[] positions = {0, 0, 0};
      private double move;
      private double spin;
-    
+     private Timer fanTimer;
     private Fan() {
+        fanTimer = new Timer();
         this.controller = Logitech.getInstance();
         fanControl = new Victor(FAN_CONTROL);
         fanBlades = new Victor(FAN_BLADES);
@@ -33,15 +35,15 @@ public class Fan implements RobotControllable {
     public void control() {
         // I like my ternary operators :(
        move = controller.getLeftStickY() < -.9 ? 1.0 : controller.getLeftStickY() > .9 ? -1.0 : 0;
-       spin = controller.getL2() && !controller.getL1() ? -1.0 : controller.getL2() && controller.getL1() ? 1.0 : 0;
+       spin = controller.getR2() ? -1.0 : 0;
        oscillateFan(spin);
        moveFan(move);
     }
     
   
-    
+   
     public void oscillateFan(double intensity){
-        fanBlades.set(intensity);
+     fanBlades.set(intensity);
     }
     
     public void moveFan(double intensity){

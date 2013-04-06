@@ -25,10 +25,10 @@ public class Climber implements RobotControllable {
     }
     
     public void control() {
-        if(controller.getR2()){
-            lifter.set(DoubleSolenoid.Value.kReverse);
-        }else{
+        if(controller.getL2()){
             lifter.set(DoubleSolenoid.Value.kForward);
+        }else{
+            lifter.set(DoubleSolenoid.Value.kReverse);
         }
     }
 

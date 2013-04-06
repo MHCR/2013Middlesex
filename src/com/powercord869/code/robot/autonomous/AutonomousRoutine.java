@@ -35,6 +35,7 @@ public abstract class AutonomousRoutine {
         fan = Fan.getInstance();
         encoders = EncoderControl.getInstance();
         drive = RobotDrive.getInstance();
+        driver = DriverStation.getInstance();
     }
 
     protected void setRoutineNumber(int number) {
@@ -54,11 +55,11 @@ public abstract class AutonomousRoutine {
     }
 
     public double getDistanceToTravel() {
-        return encoders.getLeftDistance() + encoders.getRightDistance() / 2;
+        return distanceToTravel;
     }
 
     public double getDistanceTraveled() {
-        return distanceTraveled;
+        return (encoders.getLeftDistance() + encoders.getRightDistance()) / 2;
     }
 
     protected DriverStation getDriverStation() {
