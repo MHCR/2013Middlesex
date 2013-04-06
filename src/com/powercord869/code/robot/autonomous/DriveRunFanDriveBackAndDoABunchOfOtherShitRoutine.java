@@ -38,6 +38,7 @@ public class DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine extends Autonomou
                 fan.oscillateFan(1);
             } else {
                 fan.oscillateFan(0);
+                stop();
             }
 
         }

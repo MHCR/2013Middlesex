@@ -113,6 +113,9 @@ public abstract class AutonomousRoutine {
                 drive.setLeftMotors(.5);
                 drive.setRightMotors(-.5);
             }
+        } else {
+            drive.setLeftMotors(0);
+            drive.setRightMotors(0);
         }
     }
 
