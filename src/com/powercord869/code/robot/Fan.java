@@ -17,12 +17,10 @@ public class Fan implements RobotControllable {
     private Victor fanBlades;
     private Logitech controller;
     private static Fan fan = new Fan();
-    public static double[] positions = {0, 0, 0};
      private double move;
      private double spin;
-     private Timer fanTimer;
     private Fan() {
-        fanTimer = new Timer();
+    
         this.controller = Logitech.getInstance();
         fanControl = new Victor(FAN_CONTROL);
         fanBlades = new Victor(FAN_BLADES);

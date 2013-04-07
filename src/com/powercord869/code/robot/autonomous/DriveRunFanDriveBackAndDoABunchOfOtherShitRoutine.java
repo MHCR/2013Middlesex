@@ -5,6 +5,7 @@
 package com.powercord869.code.robot.autonomous;
 
 import com.powercord869.code.robot.Fan;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -13,16 +14,13 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public class DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine extends AutonomousRoutine {  
     private boolean timerStarted = false;
-    private double DISTANCE = 0;
-    private double DISTANCE_2 = 0;
-    private static int ROUTINE_NUMBER = 3;
     private Timer timer;
     private Fan fan;//s
 
     public DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine() {
         timer = getTimer();
-        setDistanceToTravel(DISTANCE);
-        setRoutineNumber(ROUTINE_NUMBER);
+        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DriverStation.getInstance().getAnalogIn(1) * 1000);
+        setRoutineNumber(DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT);
         fan = getFan();
     }
 
@@ -45,7 +43,7 @@ public class DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine extends Autonomou
     
 
     public boolean validate() {
-        return getDriverStation().getDigitalIn(ROUTINE_NUMBER);
+        return getDriverStation().getDigitalIn(DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT);
     }
 
     public void stop() {

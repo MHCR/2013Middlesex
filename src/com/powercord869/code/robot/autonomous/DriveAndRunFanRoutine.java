@@ -6,20 +6,18 @@ package com.powercord869.code.robot.autonomous;
 
 import com.powercord869.code.robot.Fan;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  *
  * @author Computer
  */
 public class DriveAndRunFanRoutine extends AutonomousRoutine {
-
-    private double DISTANCE = 0;
+    
     private Fan fan;
     private boolean timerStarted = false;
 
     public DriveAndRunFanRoutine() {
-        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DriverStation.getInstance().getAnalogIn(1) - (30 * EncoderControl.CLICKS_PER_INCH));
+        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DriverStation.getInstance().getAnalogIn(1) * 1000);
         fan = getFan();
     }
 

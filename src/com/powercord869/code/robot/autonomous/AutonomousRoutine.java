@@ -16,11 +16,9 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public abstract class AutonomousRoutine {
 
-    private static int DRIVE_AND_TURN_ROUTINE = 1;
-    private static int DRIVE_AND_RUN_FAN_ROUTINE = 2;
-    private static int DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT = 3;
-    private static double ratio = 7.34375;
-    private static double circ = 6 * Math.PI;
+    protected static int DRIVE_AND_TURN_ROUTINE = 1;
+    protected static int DRIVE_AND_RUN_FAN_ROUTINE = 2;
+    protected static int DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT = 3;
     private static EncoderControl encoders;
     private Fan fan;
     private double distanceToTravel = 0;//change 
@@ -29,9 +27,8 @@ public abstract class AutonomousRoutine {
     RobotDrive drive;
     protected Timer time;
     protected static double distanceTraveled = 0;
-    private double turnDistance = 0;
-    public static double THE_MAGIC_NUMBER = 21;
-    public static double OFFSET = .87;
+    private static double DISTANCE_TO_SPIN = (Math.PI * 11 * EncoderControl.CLICKS_PER_INCH);
+    private boolean reset = false;
 
     public AutonomousRoutine() {
         time = new Timer();
@@ -108,20 +105,24 @@ public abstract class AutonomousRoutine {
     //im working on it! i just wrote some random stuff to get my mind going, ill get it though6
 
     protected void turn(int degrees) {
-        turnDistance = degrees * THE_MAGIC_NUMBER;
-        if (getEncoderOffset() < turnDistance) {
-            if (degrees > 0) {
-                drive.setLeftMotors(.5);
-                drive.setRightMotors(.5);
-            } else {
-                drive.setLeftMotors(.5);
-                drive.setRightMotors(.5);
-            }
-        } else {
-            drive.setLeftMotors(0);
-            drive.setRightMotors(0);
-        }
-    }
+        double distanceTurned = Math.abs(getEncoders().getLeftDistance()) + Math.abs(getEncoders().getRightDistance());
+     double change = (90 / 360) * DISTANCE_TO_SPIN;
+     if(getEncoders().getLeftDistance() + getEncoders().getRightDistance() != 0 && !reset){
+         getEncoders().reset();
+         reset = true;
+     }
+     if(distanceTurned < change && degrees < 180){
+     drive.setLeftMotors(.5);
+     drive.setRightMotors(-.5);    
+     
+    }else if(distanceTurned < change && degrees >= 180){
+          drive.setLeftMotors(-.5);
+          drive.setRightMotors(.5);  
+     }else{
+         drive.setLeftMotors(0);
+         drive.setRightMotors(0);
+     }
+}
 
     public abstract void run();
 
