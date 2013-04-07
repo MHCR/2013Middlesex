@@ -19,6 +19,8 @@ public abstract class AutonomousRoutine {
     private static int DRIVE_AND_TURN_ROUTINE = 1;
     private static int DRIVE_AND_RUN_FAN_ROUTINE = 2;
     private static int DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT = 3;
+    private static double ratio = 7.34375;
+    private static double circ = 6 * Math.PI;
     private static EncoderControl encoders;
     private Fan fan;
     private double distanceToTravel = 0;//change 
@@ -28,7 +30,8 @@ public abstract class AutonomousRoutine {
     protected Timer time;
     protected static double distanceTraveled = 0;
     private double turnDistance = 0;
-    public static double THE_MAGIC_NUMBER = 1;
+    public static double THE_MAGIC_NUMBER = 21;
+    public static double OFFSET = .87;
 
     public AutonomousRoutine() {
         time = new Timer();
@@ -74,7 +77,7 @@ public abstract class AutonomousRoutine {
         return routineNumber;
     }
 
-    protected EncoderControl getEncoders() {
+    public EncoderControl getEncoders() {
         return encoders;
     }
 
@@ -83,16 +86,16 @@ public abstract class AutonomousRoutine {
     }
 
     protected void drive(double distance) {
-        double offset = encoders.getLeftDistance() - encoders.getRightDistance();
-        if (encoders.getLeftDistance() < distance) {
-            if (offset > 2) {
-                drive.setLeftMotors(.95);
-                drive.setRightMotors(1);
-            } else if (offset < -2) {
-                drive.setRightMotors(.95);
-                drive.setLeftMotors(1);
+        double offset = getEncoderOffset();
+        if (getDistanceTraveled() < distance) {
+            if (offset > 40) {
+                drive.setLeftMotors(.4);
+                drive.setRightMotors(.5);
+            } else if (offset < -40) {
+                drive.setRightMotors(.4);
+                drive.setLeftMotors(.5);
             } else {
-                drive.setLeftMotors(1);
+                drive.setRightMotors(1);
                 drive.setLeftMotors(1);
             }
         } else {
@@ -108,11 +111,11 @@ public abstract class AutonomousRoutine {
         turnDistance = degrees * THE_MAGIC_NUMBER;
         if (getEncoderOffset() < turnDistance) {
             if (degrees > 0) {
-                drive.setLeftMotors(-.5);
+                drive.setLeftMotors(.5);
                 drive.setRightMotors(.5);
             } else {
                 drive.setLeftMotors(.5);
-                drive.setRightMotors(-.5);
+                drive.setRightMotors(.5);
             }
         } else {
             drive.setLeftMotors(0);
