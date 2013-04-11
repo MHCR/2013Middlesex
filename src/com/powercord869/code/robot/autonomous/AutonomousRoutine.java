@@ -5,6 +5,7 @@
 package com.powercord869.code.robot.autonomous;
 
 import com.powercord869.code.robot.Fan;
+import com.powercord869.code.robot.Logitech;
 import com.powercord869.code.robot.RobotDrive;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
@@ -33,6 +34,7 @@ public abstract class AutonomousRoutine {
     private boolean reverse = false;
 
     public AutonomousRoutine() {
+
         driverStation = DriverStation.getInstance();
         time = new Timer();
         fan = Fan.getInstance();

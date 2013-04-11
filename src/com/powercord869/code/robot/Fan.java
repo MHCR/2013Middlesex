@@ -32,7 +32,7 @@ public class Fan implements RobotControllable {
 
     public void control() {
         // I like my ternary operators :(
-       move = controller.getLeftStickY() < -.9 ? 1.0 : controller.getLeftStickY() > .9 ? -1.0 : 0;
+       move = (controller.getLeftStickY() < -.9 || controller.getDpadY()< -.9)  ? 1.0 : (controller.getLeftStickY() > .9 || controller.getDpadY() > .9)  ? -1.0 : 0;
        spin = controller.getR2() ? -1.0 : 0;
        oscillateFan(spin);
        moveFan(move);
