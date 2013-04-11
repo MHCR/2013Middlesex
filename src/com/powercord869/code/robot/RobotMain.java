@@ -7,7 +7,8 @@ package com.powercord869.code.robot;
 import com.powercord869.code.robot.autonomous.AutonomousRoutine;
 import com.powercord869.code.robot.autonomous.DriveAndTurnRoutine;
 import com.powercord869.code.robot.autonomous.DriveAndRunFanRoutine;
-import com.powercord869.code.robot.autonomous.DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine;
+import com.powercord869.code.robot.autonomous.DriveScoreGoBackTurnRoutine;
+
 import com.powercord869.code.robot.autonomous.NoAutonomous;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -31,6 +32,7 @@ public class RobotMain extends IterativeRobot {
     }
 
     public void disabledInit() {
+       
     }
 
     public void autonomousInit() {
@@ -43,7 +45,7 @@ public class RobotMain extends IterativeRobot {
         } else if (DriverStation.getInstance().getDigitalIn(2)) {
             routine = new DriveAndRunFanRoutine();
         } else if (DriverStation.getInstance().getDigitalIn(3)) {
-            routine = new DriveRunFanDriveBackAndDoABunchOfOtherShitRoutine();
+            routine = new DriveScoreGoBackTurnRoutine();
         } else {
             //to make sure that we dont run an old autonomous by accident
             routine = noAutonomous;

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public abstract class AutonomousRoutine {
 
+    protected DriverStation driverStation;
     protected static int DRIVE_AND_TURN_ROUTINE = 1;
     protected static int DRIVE_AND_RUN_FAN_ROUTINE = 2;
     protected static int DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT = 3;
@@ -29,8 +30,10 @@ public abstract class AutonomousRoutine {
     protected static double distanceTraveled = 0;
     private static double DISTANCE_TO_SPIN = (Math.PI * 11 * EncoderControl.CLICKS_PER_INCH);
     private boolean reset = false;
+    private boolean reverse = false;
 
     public AutonomousRoutine() {
+        driverStation = DriverStation.getInstance();
         time = new Timer();
         fan = Fan.getInstance();
         encoders = EncoderControl.getInstance();
@@ -43,6 +46,11 @@ public abstract class AutonomousRoutine {
     }
 
     protected void setDistanceToTravel(double travel) {
+        if(travel < 0){
+            reverse = true;
+        }else{
+            reverse = false;
+        }
         distanceToTravel = travel;
     }
 
@@ -69,6 +77,7 @@ public abstract class AutonomousRoutine {
     protected Fan getFan() {
         return fan;
     }
+    
 
     public int getRoutineNumber() {
         return routineNumber;
@@ -82,36 +91,36 @@ public abstract class AutonomousRoutine {
         return encoders.getLeftDistance() - encoders.getRightDistance();
     }
 
-    protected void drive(double distance) {
+    protected boolean drive(double distance) {
+        int inverse = reverse ? 1 : -1;
         double offset = getEncoderOffset();
         if (getDistanceTraveled() < distance) {
             if (offset > 40) {
-                drive.setLeftMotors(.4);
-                drive.setRightMotors(.5);
+                drive.setLeftMotors(.4 * inverse);
+                drive.setRightMotors(.5 * inverse);
             } else if (offset < -40) {
-                drive.setRightMotors(.4);
-                drive.setLeftMotors(.5);
+                drive.setRightMotors(.4 * inverse);
+                drive.setLeftMotors(.5 * inverse);
             } else {
-                drive.setRightMotors(1);
-                drive.setLeftMotors(1);
+                drive.setRightMotors(1 * inverse);
+                drive.setLeftMotors(1 * inverse);
             }
         } else {
             drive.setLeftMotors(0);
             drive.setRightMotors(0);
+            return true;
 
         }
+        return false;
 
     }
     //im working on it! i just wrote some random stuff to get my mind going, ill get it though6
 
-    protected void turn(int degrees) {
+    protected boolean turn(int degrees) {
         double distanceTurned = Math.abs(getEncoders().getLeftDistance()) + Math.abs(getEncoders().getRightDistance());
-     double change = (90 / 360) * DISTANCE_TO_SPIN;
-     if(getEncoders().getLeftDistance() + getEncoders().getRightDistance() != 0 && !reset){
-         getEncoders().reset();
-         reset = true;
-     }
-     if(distanceTurned < change && degrees < 180){
+     int change = (degrees / 360) * (int)DISTANCE_TO_SPIN;
+    
+     if(distanceTurned < change + getDistanceToTravel() && degrees < 180){
      drive.setLeftMotors(.5);
      drive.setRightMotors(-.5);    
      
@@ -121,7 +130,9 @@ public abstract class AutonomousRoutine {
      }else{
          drive.setLeftMotors(0);
          drive.setRightMotors(0);
+         return true;
      }
+     return false;
 }
 
     public abstract void run();
