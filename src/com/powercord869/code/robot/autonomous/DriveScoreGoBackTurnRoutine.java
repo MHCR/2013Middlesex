@@ -20,75 +20,91 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
     private Fan fan;//s
     private boolean changed = false;
     private boolean resetTravel = false;
-    private double DISTANCE_TO_GOAL;
+    private double DISTANCE_TO_GOAL = -2520;
     private double DISTANCE_TO_BACKUP;
     private double DISTANCE_FROM_GOAL_TO_CORNER;
     private double DISTANCE_FROM_GOAL_TO_MIDDLE;
+    private boolean turning = false;
+    private boolean lastFunction = false;
+    private boolean droveforward = false;
+    private boolean backedUp = false;
 
     public DriveScoreGoBackTurnRoutine() {
         timer = getTimer();
-        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DISTANCE_TO_GOAL * 1000);
+        setReverseDrive(true);
+        setDistanceToTravel(DISTANCE_TO_GOAL);      
         setRoutineNumber(DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT);
         fan = getFan();
     }
 
 //DIO 4 - drive to corner
 //DIO 3 - drive to middle    
-    public void run() {
-        DISTANCE_TO_GOAL = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(1) * 1000;
+
+
+    public void run() { 
+      System.out.println(timer.get());
+      System.out.println(this.reverse);
         DISTANCE_FROM_GOAL_TO_MIDDLE = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(2) * 1000;
         DISTANCE_FROM_GOAL_TO_CORNER = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(3) * 1000;
         DISTANCE_TO_BACKUP = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(4) * 1000;
-        if(!timerStarted){
-        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DISTANCE_TO_GOAL * 1000);
-        }
-        drive(getDistanceToTravel());
-        if (changed && driverStation.getDigitalIn(3) && getDistanceToTravel() <= getDistanceTraveled()) {
-            if (turn(90)) {
-                stop();
+        if (drive(getDistanceToTravel()) && !turning) {
+            if(getDistanceToTravel() == DISTANCE_TO_BACKUP){
+                backedUp = true;
             }
+            droveforward = true;
+            getEncoders().reset();
+            setDistanceToTravel(0);
         }
-        if (!timerStarted && getDistanceTraveled() >= getDistanceToTravel()) {
-            timer.start();
-            timerStarted = true;
-        }
-        if (time.get() < driverStation.getAnalogIn(4) && timerStarted) {
-            fan.moveFan(.7);
-            fan.oscillateFan(-1);
-        } else if (getDistanceTraveled() >= getDistanceToTravel()) {
-            if (!resetTravel) {
-                setDistanceToTravel(getDistanceTraveled() - DISTANCE_TO_BACKUP);//back up a little
-                reverse = true;
-                resetTravel = true;
-            } else if (turn(driverStation.getDigitalIn(4) ? 90 : 180) && !changed) {
-                if (driverStation.getDigitalIn(4)) {
-                    setDistanceToTravel(getDistanceTraveled() + DISTANCE_FROM_GOAL_TO_CORNER);                    
+        if(droveforward) {
+            if (!timerStarted) {
+                time.start();
+                timerStarted = true;
+            } else {
+                if (time.get() < 1.229) {
+                    fan.moveFan(.7);
+                    fan.oscillateFan(-1);
                 } else {
-                    setDistanceToTravel(getDistanceTraveled() + DISTANCE_FROM_GOAL_TO_MIDDLE);
+                    fan.oscillateFan(0);
+                    fan.moveFan(0);
+                    if (reverse) {
+                        setDistanceToTravel(DISTANCE_TO_BACKUP);
+                        setReverseDrive(false);
+                    }else if (backedUp && !lastFunction) {                    
+                        System.out.println("1");
+                        if(turn(45)){
+                            System.out.println("2");
+                            turning = false;
+                            getEncoders().reset();
+                            setDistanceToTravel(DISTANCE_FROM_GOAL_TO_CORNER);
+                            lastFunction = true;
+                        }else{
+                            turning = true;
+                        }
+                        System.out.println("HAI");
+                    }
+
                 }
-                reverse = false;
-                //drive to line or other goal
-                changed = true;
-            }else{
-                stop();
             }
-
-
         }
 
     }
 
     public boolean validate() {
-        return getDriverStation().getDigitalIn(DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT) || getDriverStation().getDigitalIn(4);
+        return getDriverStation().getDigitalIn(DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT);
     }
 
     public void stop() {
+        this.setReverseDrive(true);
+        setDistanceToTravel(DISTANCE_TO_GOAL);
+        droveforward = false;
         System.out.println("stopping");
         changed = false;
         timer.stop();
         timer.reset();
         timerStarted = false;
         resetTravel = false;
+        backedUp = false;
+        lastFunction = false;
         fan.oscillateFan(0);
         fan.moveFan(0);
         drive.setLeftMotors(0);
