@@ -17,7 +17,7 @@ public class DriveAndTurnRoutine extends AutonomousRoutine {
    
   
     public DriveAndTurnRoutine() {
-        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DriverStation.getInstance().getAnalogIn(1) * 1000);
+        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DriverStation.getInstance().getAnalogIn(1) * 1000, false);
     }
 
     public boolean validate() {

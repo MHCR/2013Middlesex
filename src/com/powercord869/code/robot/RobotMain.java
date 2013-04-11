@@ -38,13 +38,14 @@ public class RobotMain extends IterativeRobot {
     public void autonomousInit() {
       //  AutonomousRoutine.OFFSET = DriverStation.getInstance().getAnalogIn(2) / 5;
         if (routine != null) {
+            routine.stop();
             routine.getEncoders().reset();
         }
         if (DriverStation.getInstance().getDigitalIn(1)) {
             routine = new DriveAndTurnRoutine();
         } else if (DriverStation.getInstance().getDigitalIn(2)) {
             routine = new DriveAndRunFanRoutine();
-        } else if (DriverStation.getInstance().getDigitalIn(3)) {
+        } else if (DriverStation.getInstance().getDigitalIn(3) || DriverStation.getInstance().getDigitalIn(4)) {
             routine = new DriveScoreGoBackTurnRoutine();
         } else {
             //to make sure that we dont run an old autonomous by accident

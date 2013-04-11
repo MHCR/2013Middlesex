@@ -20,19 +20,28 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
     private Fan fan;//s
     private boolean changed = false;
     private boolean resetTravel = false;
+    private double DISTANCE_TO_GOAL;
+    private double DISTANCE_TO_BACKUP;
+    private double DISTANCE_FROM_GOAL_TO_CORNER;
+    private double DISTANCE_FROM_GOAL_TO_MIDDLE;
 
     public DriveScoreGoBackTurnRoutine() {
         timer = getTimer();
-        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DriverStation.getInstance().getAnalogIn(1) * 1000);
+        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DISTANCE_TO_GOAL * 1000, false);
         setRoutineNumber(DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT);
         fan = getFan();
     }
-    //1 is the initial distance
-    //analog 4 is the distance back
-    //analog 3 is the time in miliseconds for fan to turn
-    // 5 is the time in milliseconds for fan to spin
 
+//DIO 4 - drive to corner
+//DIO 3 - drive to middle    
     public void run() {
+        DISTANCE_TO_GOAL = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(1) * 1000;
+        DISTANCE_FROM_GOAL_TO_MIDDLE = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(2) * 1000;
+        DISTANCE_FROM_GOAL_TO_CORNER = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(3) * 1000;
+        DISTANCE_TO_BACKUP = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(4) * 1000;
+        if(!timerStarted){
+        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DISTANCE_TO_GOAL * 1000, false);
+        }
         drive(getDistanceToTravel());
         if (changed && driverStation.getDigitalIn(3) && getDistanceToTravel() <= getDistanceTraveled()) {
             if (turn(90)) {
@@ -43,25 +52,26 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
             timer.start();
             timerStarted = true;
         }
-        if (time.get() < (driverStation.getAnalogIn(3) * 1000000) && timerStarted) {
+        if (time.get() < 1000000 && timerStarted) {
             fan.moveFan(.3);
-        } else if (time.get() > (driverStation.getAnalogIn(3) * 1000000) && time.get() < (driverStation.getAnalogIn(3) * 1000) + driverStation.getAnalogIn(5) * 1000) {
-            fan.moveFan(0);
             fan.oscillateFan(1);
         } else if (getDistanceTraveled() >= getDistanceToTravel()) {
             if (!resetTravel) {
-                setDistanceToTravel(getDistanceTraveled() + 210);
+                setDistanceToTravel(getDistanceTraveled() - DISTANCE_TO_BACKUP, true);//back up a little
                 resetTravel = true;
-            } else if (turn(driverStation.getDigitalIn(4) ? 90 : 180)) {
-                setDistanceToTravel(getDistanceTraveled() + (EncoderControl.CLICKS_PER_INCH * getDriverStation().getAnalogIn(4) * 1000000));
+            } else if (turn(driverStation.getDigitalIn(4) ? 90 : 180) && !changed) {
+                if (driverStation.getDigitalIn(4)) {
+                    setDistanceToTravel(getDistanceTraveled() + DISTANCE_FROM_GOAL_TO_CORNER, false);
+                } else {
+                    setDistanceToTravel(getDistanceTraveled() + DISTANCE_FROM_GOAL_TO_MIDDLE, false);
+                }
+                //drive to line or other goal
                 changed = true;
+            }else{
+                stop();
             }
 
 
-        } else {
-            fan.oscillateFan(0);
-            timer.stop();
-            stop();
         }
 
     }
@@ -73,6 +83,7 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
     public void stop() {
         System.out.println("stopping");
         changed = false;
+        timer.stop();
         timer.reset();
         timerStarted = false;
         resetTravel = false;

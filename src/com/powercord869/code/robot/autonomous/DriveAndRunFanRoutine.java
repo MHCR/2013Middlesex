@@ -17,7 +17,7 @@ public class DriveAndRunFanRoutine extends AutonomousRoutine {
     private boolean timerStarted = false;
 
     public DriveAndRunFanRoutine() {
-        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DriverStation.getInstance().getAnalogIn(1) * 1000);
+        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DriverStation.getInstance().getAnalogIn(1) * 1000, false);
         fan = getFan();
     }
 
@@ -29,10 +29,8 @@ public class DriveAndRunFanRoutine extends AutonomousRoutine {
                 time.start();
                 timerStarted = true;
             } else {
-                if (time.get() < (driverStation.getAnalogIn(3) * 1000000)) {
+                if (time.get() < 1000000) {
                     fan.moveFan(.4);
-                } else if (time.get() > (driverStation.getAnalogIn(3) * 1000000) && time.get() < (driverStation.getAnalogIn(3) * 1000000) + 1000000) {
-                    fan.moveFan(0);
                     fan.oscillateFan(1);
                 } else {
                     fan.oscillateFan(0);
