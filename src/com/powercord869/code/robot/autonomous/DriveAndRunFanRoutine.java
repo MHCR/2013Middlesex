@@ -29,9 +29,9 @@ public class DriveAndRunFanRoutine extends AutonomousRoutine {
                 time.start();
                 timerStarted = true;
             } else {
-                if (time.get() < (driverStation.getAnalogIn(3) * 1000)) {
-                    fan.moveFan(1);
-                } else if (time.get() > (driverStation.getAnalogIn(3) * 1000) && time.get() < (driverStation.getAnalogIn(3) * 1000) + 1000) {
+                if (time.get() < (driverStation.getAnalogIn(3) * 1000000)) {
+                    fan.moveFan(.4);
+                } else if (time.get() > (driverStation.getAnalogIn(3) * 1000000) && time.get() < (driverStation.getAnalogIn(3) * 1000000) + 1000000) {
                     fan.moveFan(0);
                     fan.oscillateFan(1);
                 } else {
@@ -49,6 +49,8 @@ public class DriveAndRunFanRoutine extends AutonomousRoutine {
     }
 
     public void stop() {
+        time.reset();
+        timerStarted = false;
         fan.oscillateFan(0);
         fan.moveFan(0);
         time.stop();
