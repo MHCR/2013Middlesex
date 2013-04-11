@@ -22,19 +22,19 @@ public class Logitech extends Joystick {
         return controller;
     }
 
-    public boolean get1() {
+    public boolean getXbutton() {
         return getRawButton(1);
     }
 
-    public boolean get2() {
+    public boolean getAbutton() {
         return getRawButton(2);
     }
 
-    public boolean get3() {
+    public boolean getBbutton() {
         return getRawButton(3);
     }
 
-    public boolean get4() {
+    public boolean getYbutton() {
         return getRawButton(4);
     }
 
