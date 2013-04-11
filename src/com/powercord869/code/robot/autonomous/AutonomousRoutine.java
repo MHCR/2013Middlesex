@@ -31,7 +31,7 @@ public abstract class AutonomousRoutine {
     protected static double distanceTraveled = 0;
     private static double DISTANCE_TO_SPIN = (Math.PI * 11 * EncoderControl.CLICKS_PER_INCH);
     private boolean reset = false;
-    private boolean reverse = false;
+    protected boolean reverse = false;
 
     public AutonomousRoutine() {
 
@@ -47,8 +47,8 @@ public abstract class AutonomousRoutine {
         this.routineNumber = number;
     }
 
-    protected void setDistanceToTravel(double travel, boolean reverse) {
-        if(reverse){
+    protected void setDistanceToTravel(double travel) {
+        if(travel < 0){
             this.reverse = true;
         }else{
             this.reverse = false;
@@ -94,7 +94,7 @@ public abstract class AutonomousRoutine {
     }
 
     protected boolean drive(double distance) {
-        int inverse = reverse ? 1 : -1;
+        int inverse = reverse ? -1 : 1;
         double offset = getEncoderOffset();
         if ((getDistanceTraveled() < distance && !reverse) || (reverse && getDistanceTraveled() > distance)) {
             if (offset > 40) {
@@ -104,8 +104,8 @@ public abstract class AutonomousRoutine {
                 drive.setRightMotors(.4 * inverse);
                 drive.setLeftMotors(.5 * inverse);
             } else {
-                drive.setRightMotors(1 * inverse);
-                drive.setLeftMotors(1 * inverse);
+                drive.setRightMotors(.5 * inverse);
+                drive.setLeftMotors(.5 * inverse);
             }
         } else {
             drive.setLeftMotors(0);

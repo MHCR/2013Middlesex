@@ -27,7 +27,7 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
 
     public DriveScoreGoBackTurnRoutine() {
         timer = getTimer();
-        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DISTANCE_TO_GOAL * 1000, false);
+        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DISTANCE_TO_GOAL * 1000);
         setRoutineNumber(DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT);
         fan = getFan();
     }
@@ -40,7 +40,7 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
         DISTANCE_FROM_GOAL_TO_CORNER = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(3) * 1000;
         DISTANCE_TO_BACKUP = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(4) * 1000;
         if(!timerStarted){
-        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DISTANCE_TO_GOAL * 1000, false);
+        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DISTANCE_TO_GOAL * 1000);
         }
         drive(getDistanceToTravel());
         if (changed && driverStation.getDigitalIn(3) && getDistanceToTravel() <= getDistanceTraveled()) {
@@ -52,19 +52,21 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
             timer.start();
             timerStarted = true;
         }
-        if (time.get() < 1000000 && timerStarted) {
-            fan.moveFan(.3);
-            fan.oscillateFan(1);
+        if (time.get() < driverStation.getAnalogIn(4) && timerStarted) {
+            fan.moveFan(.7);
+            fan.oscillateFan(-1);
         } else if (getDistanceTraveled() >= getDistanceToTravel()) {
             if (!resetTravel) {
-                setDistanceToTravel(getDistanceTraveled() - DISTANCE_TO_BACKUP, true);//back up a little
+                setDistanceToTravel(getDistanceTraveled() - DISTANCE_TO_BACKUP);//back up a little
+                reverse = true;
                 resetTravel = true;
             } else if (turn(driverStation.getDigitalIn(4) ? 90 : 180) && !changed) {
                 if (driverStation.getDigitalIn(4)) {
-                    setDistanceToTravel(getDistanceTraveled() + DISTANCE_FROM_GOAL_TO_CORNER, false);
+                    setDistanceToTravel(getDistanceTraveled() + DISTANCE_FROM_GOAL_TO_CORNER);                    
                 } else {
-                    setDistanceToTravel(getDistanceTraveled() + DISTANCE_FROM_GOAL_TO_MIDDLE, false);
+                    setDistanceToTravel(getDistanceTraveled() + DISTANCE_FROM_GOAL_TO_MIDDLE);
                 }
+                reverse = false;
                 //drive to line or other goal
                 changed = true;
             }else{

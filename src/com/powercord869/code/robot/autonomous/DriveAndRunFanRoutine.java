@@ -17,27 +17,28 @@ public class DriveAndRunFanRoutine extends AutonomousRoutine {
     private boolean timerStarted = false;
 
     public DriveAndRunFanRoutine() {
-        setDistanceToTravel(EncoderControl.CLICKS_PER_INCH * DriverStation.getInstance().getAnalogIn(1) * 1000, false);
+        setDistanceToTravel(-(EncoderControl.CLICKS_PER_INCH * DriverStation.getInstance().getAnalogIn(1) * 1000));
         fan = getFan();
     }
 
     public void run() {
-
+       
         drive(getDistanceToTravel());
-        if (distanceTraveled >= getDistanceToTravel()) {
+        if ((getDistanceTraveled() >= getDistanceToTravel() && !reverse) || (getDistanceTraveled() <= getDistanceToTravel() && reverse)) {
             if (!timerStarted) {
                 time.start();
                 timerStarted = true;
             } else {
-                if (time.get() < 1000000) {
-                    fan.moveFan(.4);
-                    fan.oscillateFan(1);
+                if (time.get() < driverStation.getAnalogIn(4)) {
+                    fan.moveFan(.7);
+                    fan.oscillateFan(-1);
                 } else {
                     fan.oscillateFan(0);
                     fan.moveFan(0);
                 }
             }
         }
+         System.out.println(time.get());
 
     }
 
