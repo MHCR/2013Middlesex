@@ -118,8 +118,9 @@ public abstract class AutonomousRoutine {
 
     protected boolean turn(int degrees) {
         double distanceTurned = Math.abs(getEncoders().getLeftDistance()) + Math.abs(getEncoders().getRightDistance());
-        int change = (degrees / 360) * (int) DISTANCE_TO_SPIN;
-
+        double change = (degrees / 360) * DISTANCE_TO_SPIN;
+        
+        System.out.println("change: " + change+ "turned: " + distanceTurned);
         if (distanceTurned < change && degrees <= 180) {
             drive.setLeftMotors(.5);
             drive.setRightMotors(-.5);
