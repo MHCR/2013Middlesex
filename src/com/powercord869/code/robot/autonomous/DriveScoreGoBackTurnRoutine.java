@@ -21,7 +21,7 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
     private Fan fan;//s
     private boolean changed = false;
     private boolean resetTravel = false;
-    private double DISTANCE_TO_GOAL = -2520;
+    private double DISTANCE_TO_GOAL = -2200;
     private double DISTANCE_TO_BACKUP;
     private double DISTANCE_FROM_GOAL_TO_CORNER;
     private double DISTANCE_FROM_GOAL_TO_MIDDLE;
@@ -51,10 +51,10 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
         LCD.print(3, "state: " + state);
         System.out.println(timer.get()); 
         System.out.println(this.reverse);
-        DISTANCE_TO_GOAL = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(1) * 1000;
+        //DISTANCE_TO_GOAL = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(1) * 1000;
         DISTANCE_FROM_GOAL_TO_MIDDLE = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(2) * 1000;
-        DISTANCE_FROM_GOAL_TO_CORNER = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(3) * 1000;
-        DISTANCE_TO_BACKUP = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(4) * 1000;
+        DISTANCE_FROM_GOAL_TO_CORNER = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(3) * 1000;//.140
+        DISTANCE_TO_BACKUP = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(4) * 1000;//.020
         if(driverStation.getDigitalIn(3)) {
             right = true;
             finalDistance = DISTANCE_FROM_GOAL_TO_CORNER;
