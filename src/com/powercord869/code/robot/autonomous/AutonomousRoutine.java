@@ -29,7 +29,7 @@ public abstract class AutonomousRoutine {
     RobotDrive drive;
     protected Timer time;
     protected static double distanceTraveled = 0;
-    private static double DISTANCE_TO_SPIN = (Math.PI * 11 * EncoderControl.CLICKS_PER_INCH);
+    private static double DISTANCE_TO_SPIN = (Math.PI * 11 * EncoderControl.CLICKS_PER_INCH) * 3.1;
     private boolean reset = false;
     protected boolean reverse = false;
 
@@ -88,13 +88,17 @@ public abstract class AutonomousRoutine {
     }
 
     public double getEncoderOffset() {
-        return encoders.getLeftDistance() - encoders.getRightDistance();
+        if(reverse) {
+            return encoders.getRightDistance() - encoders.getLeftDistance();
+        } else {
+            return encoders.getLeftDistance() - encoders.getRightDistance();
+        }
     }
 
     protected boolean drive(double distance) {
         int inverse = reverse ? -1 : 1;
         double offset = getEncoderOffset();
-        if ((!reverse && getDistanceTraveled() < distance) || (reverse && getDistanceTraveled() >= distance)) {
+        if ((!reverse && getDistanceTraveled() < distance) || (reverse && getDistanceTraveled() > distance)) {
             if (offset > 40) {
                 drive.setLeftMotors(.4 * inverse);
                 drive.setRightMotors(.5 * inverse);
@@ -116,16 +120,19 @@ public abstract class AutonomousRoutine {
     }
     //im working on it! i just wrote some random stuff to get my mind going, ill get it though6
 
-    protected boolean turn(int degrees) {
+    protected boolean turn(float degrees, boolean right) {
+//        if(degrees > 180){
+//            degrees = 360 - degrees;
+//        }
         double distanceTurned = Math.abs(getEncoders().getLeftDistance()) + Math.abs(getEncoders().getRightDistance());
-        double change = (degrees / 360) * DISTANCE_TO_SPIN;
+        double change = (degrees / 360F) * DISTANCE_TO_SPIN;
         
         System.out.println("change: " + change+ "turned: " + distanceTurned);
-        if (distanceTurned < change && degrees <= 180) {
+        if (distanceTurned < change && right) {
             drive.setLeftMotors(.5);
             drive.setRightMotors(-.5);
             return false;
-        } else if (distanceTurned < change && degrees > 180) {
+        } else if (distanceTurned < change && !right) {
             drive.setLeftMotors(-.5);
             drive.setRightMotors(.5);
             return false;

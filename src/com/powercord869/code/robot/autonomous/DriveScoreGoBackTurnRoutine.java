@@ -5,6 +5,7 @@
 package com.powercord869.code.robot.autonomous;
 
 import com.powercord869.code.robot.Fan;
+import com.powercord869.code.robot.LCD;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -28,8 +29,12 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
     private int RUN_FAN_STATE = 2;
     private int BACK_UP_STATE = 3;
     private int TURN_STATE = 4;
-    private int DRIVE_TO_CORNER_STATE = 1;
+    private int DRIVE_TO_CORNER_STATE = 5;
+    private int STOP_STATE = 0;
+    private int degrees = 45;
+    private boolean right;
     private int state = 0;
+    private double finalDistance;
 
     public DriveScoreGoBackTurnRoutine() {
         timer = getTimer();
@@ -37,23 +42,33 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
         setDistanceToTravel(DISTANCE_TO_GOAL);
         setRoutineNumber(DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT);
         fan = getFan();
+        state = DRIVE_TO_GOAL_STATE;
     }
 
 //DIO 4 - drive to corner
 //DIO 3 - drive to middle    
     public void run() {
-        System.out.println(timer.get());
+        LCD.print(3, "state: " + state);
+        System.out.println(timer.get()); 
         System.out.println(this.reverse);
+        DISTANCE_TO_GOAL = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(1) * 1000;
         DISTANCE_FROM_GOAL_TO_MIDDLE = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(2) * 1000;
         DISTANCE_FROM_GOAL_TO_CORNER = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(3) * 1000;
         DISTANCE_TO_BACKUP = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(4) * 1000;
-        if (drive(getDistanceToTravel()) && state != TURN_STATE) {
-            if (getDistanceToTravel() == DISTANCE_TO_BACKUP) {
+        if(driverStation.getDigitalIn(3)) {
+            right = true;
+            finalDistance = DISTANCE_FROM_GOAL_TO_CORNER;
+        } else {
+            right = false;
+            finalDistance = DISTANCE_FROM_GOAL_TO_MIDDLE;
+        }
+        if (state != TURN_STATE && drive(getDistanceToTravel())) {
+            if (BACK_UP_STATE == state) {
                 state = TURN_STATE;
-            } else if (getDistanceToTravel() == DISTANCE_TO_GOAL) {
+            } else if (DRIVE_TO_GOAL_STATE == state) {
                 state = RUN_FAN_STATE;                
-            } else if (getDistanceToTravel() == DISTANCE_FROM_GOAL_TO_CORNER) {
-                state = 0;
+            } else if (DRIVE_TO_CORNER_STATE == state) {
+                state = STOP_STATE;
             }
             getEncoders().reset();
             setDistanceToTravel(0);
@@ -70,16 +85,17 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
 
                 fan.oscillateFan(0);
                 fan.moveFan(0);
+                if(RUN_FAN_STATE == state){
                     setDistanceToTravel(DISTANCE_TO_BACKUP);
                     setReverseDrive(false);
                     state = BACK_UP_STATE;
-                if (state == TURN_STATE) {
+                } else if (TURN_STATE == state) {
                     System.out.println("1");
-                    if (turn(45)) {
+                    if (turn(degrees, right)) {
                         System.out.println("2");
                         state = DRIVE_TO_CORNER_STATE;
-                        getEncoders().reset();
-                        setDistanceToTravel(DISTANCE_FROM_GOAL_TO_CORNER);
+                        getEncoders().reset();                        
+                        setDistanceToTravel(finalDistance);
                     } 
                 }
 
@@ -88,7 +104,7 @@ public class DriveScoreGoBackTurnRoutine extends AutonomousRoutine {
     }
 
     public boolean validate() {
-        return getDriverStation().getDigitalIn(DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT);
+        return getDriverStation().getDigitalIn(DRIVE_RUN_FAN_DRIVE_BACK_AND_SHIT) || getDriverStation().getDigitalIn(4);
     }
 
     public void stop() {

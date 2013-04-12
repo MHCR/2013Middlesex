@@ -8,6 +8,7 @@ import com.powercord869.code.robot.autonomous.AutonomousRoutine;
 import com.powercord869.code.robot.autonomous.DriveAndTurnRoutine;
 import com.powercord869.code.robot.autonomous.DriveAndRunFanRoutine;
 import com.powercord869.code.robot.autonomous.DriveScoreGoBackTurnRoutine;
+import com.powercord869.code.robot.autonomous.EncoderControl;
 
 import com.powercord869.code.robot.autonomous.NoAutonomous;
 import edu.wpi.first.wpilibj.Compressor;
@@ -59,6 +60,7 @@ public class RobotMain extends IterativeRobot {
     }
 
     public void testInit() {
+    
     }
 
     public void disabledPeriodic() {
@@ -76,7 +78,7 @@ public class RobotMain extends IterativeRobot {
         if (routine != null) {
             LCD.print("Auto: " + this.getStopwatchTime() + " sec");
             LCD.print(2, "Distance: " + routine.getDistanceTraveled());
-            LCD.print(3, "Encoder Off: " + routine.getEncoderOffset());
+          //  LCD.print(3, "Encoder Off: " + routine.getEncoderOffset());
             LCD.print(4,"Destination: " + routine.getDistanceToTravel());
             LCD.print(5, "RightE: " + routine.getEncoders().getRightDistance());
             LCD.print(6, " LeftE " + routine.getEncoders().getLeftDistance());

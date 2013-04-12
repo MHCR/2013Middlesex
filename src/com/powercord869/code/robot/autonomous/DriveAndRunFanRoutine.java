@@ -29,6 +29,7 @@ public class DriveAndRunFanRoutine extends AutonomousRoutine {
 
     public void run() {     
         System.out.println(time.get());
+        DISTANCE_TO_GOAL = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(1) * 1000;
         DISTANCE_FROM_GOAL_TO_MIDDLE = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(2) * 1000;
         DISTANCE_FROM_GOAL_TO_CORNER = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(3) * 1000;
         DISTANCE_TO_BACKUP = EncoderControl.CLICKS_PER_INCH * driverStation.getAnalogIn(4) * 1000;

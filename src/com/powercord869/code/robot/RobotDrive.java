@@ -33,7 +33,6 @@ public class RobotDrive implements RobotControllable {
         jag1_right = new Jaguar(RIGHT_MOTOR_1);
         jag2_right = new Jaguar(RIGHT_MOTOR_2);
         jag3_right = new Jaguar(RIGHT_MOTOR_3);
-        
     }
     
     public double getRightSpeed(){
